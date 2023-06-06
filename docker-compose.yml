@@ -1,18 +1,14 @@
 version: "3"
 services:
   php-fpm:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./src:/var/www/html
-    ports:
-      - 9000:9000
-    environment:
-      - APP_ENV=dev
-      - APP_DEBUG=1
+    image: 'bitnami/php-fpm:latest'
     networks:
       - app-network
+    ports:
+      - '9000:9000'
+    volumes:
+      - ./symfony-app:/app
+
   mysql:
     image: mysql:latest
     volumes:
