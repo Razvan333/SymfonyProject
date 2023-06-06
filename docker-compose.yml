@@ -1,16 +1,19 @@
 version: "3"
 services:
   php-fpm:
-    image: 'bitnami/php-fpm:latest'
+    build:
+      context: ./dockerfile-phpfpm
+      dockerfile: Dockerfile
     networks:
       - app-network
     ports:
       - '9000:9000'
     volumes:
       - ./symfony-app:/app
-
   mysql:
-    image: mysql:latest
+    build:
+      context: ./dockerfile-mysql
+      dockerfile: Dockerfile
     volumes:
       - db_data:/var/lib/mysql
     environment:
@@ -18,11 +21,14 @@ services:
       - MYSQL_DATABASE=Training
       - MYSQL_USER=razvan
       - MYSQL_PASSWORD=1234
+    ports:
+      - '3306:3306'
     networks:
       - app-network
   rabbitmq:
-    container_name: "rabbitmq"
-    image: rabbitmq:3.8-management-alpine
+    build:
+      context: ./dockerfile-rabbitmq
+      dockerfile: Dockerfile
     environment:
       - RABBITMQ_DEFAULT_USER=razvan
       - RABBITMQ_DEFAULT_PASS=12345
@@ -32,7 +38,9 @@ services:
     networks:
       - app-network
   redis:
-    image: redis:latest
+    build:
+      context: ./dockerfile-redis
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '6379:6379'
