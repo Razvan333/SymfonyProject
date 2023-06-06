@@ -1,0 +1,57 @@
+version: "3"
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www/html
+    ports:
+      - 9000:9000
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=1
+    networks:
+      - app-network
+  mysql:
+    image: mysql:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=Test1234
+      - MYSQL_DATABASE=Training
+      - MYSQL_USER=razvan
+      - MYSQL_PASSWORD=1234
+    networks:
+      - app-network
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq:3.8-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=razvan
+      - RABBITMQ_DEFAULT_PASS=12345
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    networks:
+      - app-network
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - cache:/data
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+    driver: local
+  cache:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge
+
