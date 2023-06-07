@@ -5,6 +5,7 @@ RUN apt-get update && \
         zip \
         unzip \
         curl \
+        libzip-dev \
         && rm -rf /var/lib/apt/lists/*
 
 RUN docker-php-ext-install pdo_mysql

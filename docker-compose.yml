@@ -9,7 +9,7 @@ services:
     ports:
       - '9000:9000'
     volumes:
-      - ./symfony-app:/app
+      - ./symfony-app/symfony-app:/var/www/html
   mysql:
     build:
       context: ./dockerfile-mysql
@@ -21,6 +21,7 @@ services:
       - MYSQL_DATABASE=Training
       - MYSQL_USER=razvan
       - MYSQL_PASSWORD=1234
+      - MYSQL_HOST=mysql
     ports:
       - '3306:3306'
     networks:
