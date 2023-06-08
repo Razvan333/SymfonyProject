@@ -22,3 +22,11 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\Command\ImportDataFromCsvCommand:
+        tags: ['console.command']
+
+    App\Validator\CsvDataValidator:
+        autowire: true
+        autoconfigure: true
+        tags: [ 'validator.constraint_validator' ]
+
