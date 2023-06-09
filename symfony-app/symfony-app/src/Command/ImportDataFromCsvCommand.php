@@ -65,10 +65,8 @@ class ImportDataFromCsvCommand extends Command
             fgetcsv($file);
 
             while (($row = fgetcsv($file, 1000,',')) !== false) {
-                $cleanData = preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '', $row[0]);
-                $data = explode(',', $cleanData);
-                if (isset($data[0]) && isset($data[1])) {
-                    $violations = $this->validator->validate($data, new CsvData());
+                if (isset($row[0]) && isset($row[1])) {
+                    $violations = $this->validator->validate($row, new CsvData());
                     if (count($violations)) {
                         foreach ($violations as $violation) {
                             $io->error($violation->getPropertyPath() . ': ' . $violation->getMessage());
@@ -77,8 +75,8 @@ class ImportDataFromCsvCommand extends Command
                         return Command::FAILURE;
                     }
 
-                    $customerId = $data[0];
-                    $address = $data[1];
+                    $customerId = $row[0];
+                    $address = $row[1];
 
                     $customer = new Customer();
                     $customer->setId($customerId);

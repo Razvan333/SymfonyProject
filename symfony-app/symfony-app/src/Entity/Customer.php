@@ -14,9 +14,12 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     */
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -83,5 +86,4 @@ class Customer
 
         return $this;
     }
-
 }

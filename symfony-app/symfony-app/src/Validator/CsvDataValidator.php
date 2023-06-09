@@ -21,7 +21,7 @@ class CsvDataValidator extends ConstraintValidator
                 ->addViolation();
         }
 
-        if (!preg_match('/^[a-zA-Z0-9.\s]+$/', $value[1])) {
+        if (!preg_match('/^[a-zA-Z0-9.\săâțșî]+$/', $value[1])) {
             $this->context->buildViolation($constraint->addressMessage)
                 ->setParameter('{{ value }}', $value[1])
                 ->addViolation();
