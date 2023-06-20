@@ -5,11 +5,11 @@ namespace App\Validator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-class CsvDataValidator extends ConstraintValidator
+class DataValidator extends ConstraintValidator
 {
     public function validate($value, Constraint $constraint)
     {
-        /* @var App\Validator\CsvData $constraint */
+        /* @var App\Validator\Data $constraint */
 
         if (null === $value || '' === $value) {
             return;
@@ -25,6 +25,14 @@ class CsvDataValidator extends ConstraintValidator
             $this->context->buildViolation($constraint->addressMessage)
                 ->setParameter('{{ value }}', $value[1])
                 ->addViolation();
+        }
+
+        if (!empty($value[2])) {
+            if (!preg_match('/^[a-zA-Z\săâțșî]+$/', $value[2])) {
+                $this->context->buildViolation($constraint->fullNameMessage)
+                    ->setParameter('{{ value }}', $value[2])
+                    ->addViolation();
+            }
         }
     }
 }

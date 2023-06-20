@@ -25,8 +25,33 @@ services:
     App\Command\ImportDataFromCsvCommand:
         tags: ['console.command']
 
-    App\Validator\CsvDataValidator:
+    App\Validator\DataValidator:
         autowire: true
         autoconfigure: true
-        tags: [ 'validator.constraint_validator' ]
+        tags: ['validator.constraint_validator']
 
+    App\Command\TestRabbitMqConnectionCommand:
+        arguments:
+            $messageBus: '@Symfony\Component\Messenger\MessageBusInterface'
+
+    App\MessageHandler\RabbitMqMessageHandler:
+        arguments:
+            $entityManager: '@doctrine.orm.default_entity_manager'
+            $validator: '@validator'
+        tags: ['messenger.message_handler']
+
+    App\Message\RabbitMqMessage:
+
+    PhpAmqpLib\Connection\AMQPStreamConnection:
+        arguments:
+            $host: 'rabbitmq'
+            $port: 5672
+            $user: 'razvan'
+            $password: '12345'
+            $vhost: '/'
+
+    App\Command\ConsumeRabbitMqMessagesCommand:
+        tags: ['console.command']
+        arguments:
+            $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
+            $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'

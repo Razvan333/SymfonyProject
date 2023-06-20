@@ -4,7 +4,7 @@ namespace App\Command;
 
 use App\Entity\Customer;
 use App\Entity\CustomerAddress;
-use App\Validator\CsvData;
+use App\Validator\Data;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -66,7 +66,7 @@ class ImportDataFromCsvCommand extends Command
 
             while (($row = fgetcsv($file, 1000,',')) !== false) {
                 if (isset($row[0]) && isset($row[1])) {
-                    $violations = $this->validator->validate($row, new CsvData());
+                    $violations = $this->validator->validate($row, new Data());
                     if (count($violations)) {
                         foreach ($violations as $violation) {
                             $io->error($violation->getPropertyPath() . ': ' . $violation->getMessage());
