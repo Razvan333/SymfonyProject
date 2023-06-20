@@ -10,12 +10,13 @@ use Symfony\Component\Validator\Constraint;
  * @Target({"PROPERTY", "METHOD", "ANNOTATION"})
  */
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
-class CsvData extends Constraint
+class Data extends Constraint
 {
     /*
      * Any public properties become valid options for the annotation.
      * Then, use these in your validator class.
      */
-    public $numberMessage = 'First parameters is not a number: {{ value }}';
-    public $addressMessage = 'Second parameters not match regex: {{ value }}';
+    public $numberMessage = 'Customer id is not in a valid format: {{ value }}';
+    public $fullNameMessage = 'Customer name is not in a valid format: {{ value }}';
+    public $addressMessage = 'Customer address is not in a valid format: {{ value }}';
 }
