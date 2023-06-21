@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Customer;
 use Doctrine\ORM\EntityManagerInterface;
+use Predis\Client;
 use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Cache\Adapter\RedisAdapter;
@@ -20,7 +21,7 @@ class CustomerController extends AbstractController
 {
     private SerializerInterface $serializer;
     private ValidatorInterface $validator;
-    private RedisTagAwareAdapter $cache;
+    private Client $cache;
     private EntityManagerInterface $entityManager;
     private const CACHE_TIMER = 86400;
 
@@ -28,16 +29,12 @@ class CustomerController extends AbstractController
         SerializerInterface $serializer,
         ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
+        Client $cache
     ) {
         $this->serializer = $serializer;
         $this->validator = $validator;
         $this->entityManager = $entityManager;
-
-        $client = RedisAdapter::createConnection(
-            'redis://redis:6379'
-        );
-
-        $this->cache = new RedisTagAwareAdapter($client);
+        $this->cache = $cache;
     }
 
     #[Route('/customer', name: 'get_all_customer', methods: ['GET'])]
@@ -45,24 +42,16 @@ class CustomerController extends AbstractController
     {
         $cacheKey = 'all_customers';
 
-        try {
-            $customers = $this->cache->get($cacheKey, function (ItemInterface $item) {
-                $customers = $this->entityManager->getRepository(Customer::class)->findAll();
+        $customers = $this->cache->get($cacheKey);
 
-                if (!$customers) {
-                    throw $this->createNotFoundException('Customers table is empty');
-                }
+        if (null === $customers) {
+            $customers = $this->entityManager->getRepository(Customer::class)->findAll();
+            if (!$customers) {
+                return new JsonResponse(['error' => 'CUSTOMER TABLE EMPTY'], Response::HTTP_NOT_FOUND, [], true);
+            }
 
-                $serializedCustomers = $this->serializer->serialize($customers, 'json');
-
-                $item->expiresAfter(self::CACHE_TIMER);
-
-                return $serializedCustomers;
-            });
-        } catch (InvalidArgumentException $iae) {
-            return new JsonResponse(['error' => 'Invalid argument: ' .$iae->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (NotFoundHttpException $nfhe) {
-            return new JsonResponse(['error' => $nfhe->getMessage()], Response::HTTP_NOT_FOUND);
+            $this->cache->set($cacheKey, $customers);
+            $this->cache->expire($cacheKey, self::CACHE_TIMER);
         }
 
         return new JsonResponse($customers, Response::HTTP_OK, [], true);
@@ -73,24 +62,17 @@ class CustomerController extends AbstractController
     {
         $cacheKey = 'customer_' . $id;
 
-        try {
-            $customer = $this->cache->get($cacheKey, function (ItemInterface $item) use ($id) {
-                $customer = $this->entityManager->getRepository(Customer::class)->find($id);
+        $customer = $this->cache->get($cacheKey);
 
-                if (!$customer) {
-                    throw $this->createNotFoundException('Customer not found.');
-                }
+        if (null === $customer) {
+            $customer = $this->entityManager->getRepository(Customer::class)->find($id);
 
-                $serializeCustomer = $this->serializer->serialize($customer, 'json');
+            if (!$customer) {
+                return new JsonResponse(['error' => 'CUSTOMER WITH ID: ' . $id .' NOT FOUND'], Response::HTTP_NOT_FOUND, [], true);
+            }
 
-                $item->expiresAfter(self::CACHE_TIMER);
-
-                return $serializeCustomer;
-            });
-        } catch (InvalidArgumentException $iae) {
-            return new JsonResponse(['error' => 'Invalid argument: ' .$iae->getMessage()], Response::HTTP_BAD_REQUEST);
-        } catch (NotFoundHttpException $nfhe) {
-            return new JsonResponse(['error' => $nfhe->getMessage()], Response::HTTP_NOT_FOUND);
+            $this->cache->set($cacheKey, $customer);
+            $this->cache->expire($cacheKey, self::CACHE_TIMER);
         }
 
         return new JsonResponse($customer, Response::HTTP_OK, [], true);
