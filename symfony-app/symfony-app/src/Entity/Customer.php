@@ -6,6 +6,8 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Annotation\MaxDepth;
 
 /**
  * @ORM\Table(name="customer")
@@ -18,14 +20,16 @@ class Customer
      * @ORM\Id
      * @ORM\Column(type="integer")
      */
+    #[Groups('customer')]
     #[ORM\Id]
     #[ORM\Column(type: 'integer')]
     private ?int $id = null;
-
+    #[Groups('customer')]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $customer_name = null;
 
     #[ORM\OneToMany(mappedBy: 'customerId', targetEntity: CustomerAddress::class)]
+    #[MaxDepth(1)]
     private Collection $customerAddresses;
 
     public function __construct()

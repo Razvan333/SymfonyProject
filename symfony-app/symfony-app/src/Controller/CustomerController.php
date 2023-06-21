@@ -5,17 +5,13 @@ namespace App\Controller;
 use App\Entity\Customer;
 use Doctrine\ORM\EntityManagerInterface;
 use Predis\Client;
-use Psr\Cache\InvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Cache\Adapter\RedisAdapter;
-use Symfony\Component\Cache\Adapter\RedisTagAwareAdapter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 class CustomerController extends AbstractController
 {
@@ -46,11 +42,13 @@ class CustomerController extends AbstractController
 
         if (null === $customers) {
             $customers = $this->entityManager->getRepository(Customer::class)->findAll();
+
             if (!$customers) {
-                return new JsonResponse(['error' => 'CUSTOMER TABLE EMPTY'], Response::HTTP_NOT_FOUND, [], true);
+                return new JsonResponse("['error' => 'CUSTOMER TABLE EMPTY']", Response::HTTP_NOT_FOUND, [], true);
             }
 
-            $this->cache->set($cacheKey, $customers);
+            $customerData = $this->serializer->serialize($customers, 'json', ['groups' => ['customer']]);
+            $this->cache->set($cacheKey, $customerData);
             $this->cache->expire($cacheKey, self::CACHE_TIMER);
         }
 
@@ -68,10 +66,11 @@ class CustomerController extends AbstractController
             $customer = $this->entityManager->getRepository(Customer::class)->find($id);
 
             if (!$customer) {
-                return new JsonResponse(['error' => 'CUSTOMER WITH ID: ' . $id .' NOT FOUND'], Response::HTTP_NOT_FOUND, [], true);
+                return new JsonResponse("['error' => 'CUSTOMER WITH ID: ' . $id .' NOT FOUND']", Response::HTTP_NOT_FOUND, [], true);
             }
 
-            $this->cache->set($cacheKey, $customer);
+            $customerData = $this->serializer->serialize($customer, 'json', ['groups' => ['customer']]);
+            $this->cache->set($cacheKey, $customerData);
             $this->cache->expire($cacheKey, self::CACHE_TIMER);
         }
 
