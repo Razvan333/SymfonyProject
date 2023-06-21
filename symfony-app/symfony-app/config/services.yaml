@@ -55,3 +55,9 @@ services:
         arguments:
             $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
+
+    App\Controller\CustomerController:
+        arguments:
+            $serializer: '@serializer'
+            $validator: '@validator'
+            $entityManager: '@doctrine.orm.default_entity_manager'
