@@ -1,3 +1,4 @@
-controllers:
-    resource: ../src/Controller/
-    type: attribute
+post_create_customer:
+    path: /customer/post
+    controller: App\Controller\CustomerPostController::createCustomer
+    methods: POST
