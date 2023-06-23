@@ -1,3 +1,4 @@
-controllers:
-    resource: ../src/Controller/
-    type: attribute
+put_customer_update:
+    path: /customer/put/{id}
+    controller: App\Controller\CustomerPutController::updateCustomer
+    methods: PUT
