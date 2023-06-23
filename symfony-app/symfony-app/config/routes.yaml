@@ -1,3 +1,4 @@
-controllers:
-    resource: ../src/Controller/
-    type: attribute
+delete_customer:
+    path: /customer/delete/{id}
+    controller: App\Controller\CustomerDeleteController::deleteCustomer
+    methods: DELETE
