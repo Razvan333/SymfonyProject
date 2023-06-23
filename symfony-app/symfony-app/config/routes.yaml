@@ -1,3 +1,4 @@
-controllers:
-    resource: ../src/Controller/
-    type: attribute
+patch_customer:
+    path: /customer/patch/{id}
+    controller: App\Controller\CustomerPatchController::patchCustomer
+    methods: PATCH
