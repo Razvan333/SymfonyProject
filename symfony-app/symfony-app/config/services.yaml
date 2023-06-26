@@ -60,3 +60,15 @@ services:
         arguments:
             $entityManager: '@doctrine.orm.default_entity_manager'
             $validator: '@validator'
+
+    redis:
+        class: Predis\Client
+        arguments:
+            - '%env(resolve:REDIS_URL)%'
+
+    App\Controller\CustomerController:
+        arguments:
+            $serializer: '@serializer'
+            $validator: '@validator'
+            $entityManager: '@doctrine.orm.default_entity_manager'
+            $cache: '@redis'
