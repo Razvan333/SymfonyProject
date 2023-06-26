@@ -1,3 +1,8 @@
+post_create_customer:
+    path: /customer/post
+    controller: App\Controller\CustomerPostController::createCustomer
+    methods: POST
+
 get_all_customer:
     path: /customer
     controller: App\Controller\CustomerController::index
@@ -7,3 +12,4 @@ get_customer:
     path: /customer/{id}
     controller: App\Controller\CustomerController::getCustomerById
     methods: GET
+

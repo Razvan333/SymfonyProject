@@ -56,12 +56,15 @@ services:
             $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
 
+    App\Controller\CustomerPostController:
+
     redis:
         class: Predis\Client
         arguments:
             - '%env(resolve:REDIS_URL)%'
 
     App\Controller\CustomerController:
+
         arguments:
             $serializer: '@serializer'
             $validator: '@validator'

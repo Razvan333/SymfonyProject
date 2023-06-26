@@ -30,9 +30,9 @@ class RabbitMqMessageHandler implements MessageHandlerInterface
         $data = json_decode($message->getData(), true);
 
         $dataForValidation = [
-            0 => $data['customer_id'],
-            1 => $data['customer_address'],
-            2 => $data['customer_name']
+            'id' => $data['customer_id'],
+            'customer_address' => $data['customer_address'],
+            'customer_name' => $data['customer_name']
         ];
         $violations = $this->validator->validate($dataForValidation, new Data());
         if (count($violations)) {

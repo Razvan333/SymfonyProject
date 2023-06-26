@@ -15,22 +15,24 @@ class DataValidator extends ConstraintValidator
             return;
         }
 
-        if (!preg_match('/^[0-9]+$/', $value[0])) {
+        if (!preg_match('/^[0-9]+$/', $value['id'])) {
             $this->context->buildViolation($constraint->numberMessage)
-                ->setParameter('{{ value }}', $value[0])
+                ->setParameter('{{ value }}', $value['id'])
                 ->addViolation();
         }
 
-        if (!preg_match('/^[a-zA-Z0-9.\săâțșî]+$/', $value[1])) {
-            $this->context->buildViolation($constraint->addressMessage)
-                ->setParameter('{{ value }}', $value[1])
-                ->addViolation();
+        if (!empty($value['customer_address'])) {
+            if (!preg_match('/^[a-zA-Z0-9.\săâțșî]+$/', $value['customer_address'])) {
+                $this->context->buildViolation($constraint->addressMessage)
+                    ->setParameter('{{ value }}', $value['customer_address'])
+                    ->addViolation();
+            }
         }
 
-        if (!empty($value[2])) {
-            if (!preg_match('/^[a-zA-Z\săâțșî]+$/', $value[2])) {
+        if (!empty($value['customer_name'])) {
+            if (!preg_match('/^[a-zA-Z\săâțșî]+$/', $value['customer_name'])) {
                 $this->context->buildViolation($constraint->fullNameMessage)
-                    ->setParameter('{{ value }}', $value[2])
+                    ->setParameter('{{ value }}', $value['customer_name'])
                     ->addViolation();
             }
         }
