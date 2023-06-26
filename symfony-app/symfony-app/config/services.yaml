@@ -56,10 +56,12 @@ services:
             $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
 
+
     App\Controller\CustomerPutController:
         arguments:
             $entityManager: '@doctrine.orm.default_entity_manager'
             $validator: '@validator'
+
 
     App\Controller\CustomerPostController:
 

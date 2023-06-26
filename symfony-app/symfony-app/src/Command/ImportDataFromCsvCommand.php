@@ -66,7 +66,11 @@ class ImportDataFromCsvCommand extends Command
 
             while (($row = fgetcsv($file, 1000,',')) !== false) {
                 if (isset($row[0]) && isset($row[1])) {
-                    $violations = $this->validator->validate($row, new Data());
+                    $dataForValidation = [
+                        'id' => $row[0],
+                        'customer_address' => $row[1]
+                    ];
+                    $violations = $this->validator->validate($dataForValidation, new Data());
                     if (count($violations)) {
                         foreach ($violations as $violation) {
                             $io->error($violation->getPropertyPath() . ': ' . $violation->getMessage());
