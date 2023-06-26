@@ -56,6 +56,9 @@ services:
             $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
 
+    App\Controller\CustomerDeleteController:
+        arguments:
+            $entityManager: '@doctrine.orm.default_entity_manager'
 
     App\Controller\CustomerPatchController:
         arguments:
