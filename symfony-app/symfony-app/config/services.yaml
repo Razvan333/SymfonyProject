@@ -57,11 +57,15 @@ services:
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
 
 
-    App\Controller\CustomerPutController:
+    App\Controller\CustomerPatchController:
         arguments:
             $entityManager: '@doctrine.orm.default_entity_manager'
             $validator: '@validator'
 
+    App\Controller\CustomerPutController:
+        arguments:
+            $entityManager: '@doctrine.orm.default_entity_manager'
+            $validator: '@validator'
 
     App\Controller\CustomerPostController:
 

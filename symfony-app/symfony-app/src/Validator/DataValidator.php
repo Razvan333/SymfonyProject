@@ -24,7 +24,6 @@ class DataValidator extends ConstraintValidator
         if (!empty($value['customer_address'])) {
             if (!preg_match('/^[a-zA-Z0-9.\săâțșî]+$/', $value['customer_address'])) {
                 $this->context->buildViolation($constraint->addressMessage)
-                    ->setParameter('{{ value }}', $value['cusotmer_address'])
                     ->setParameter('{{ value }}', $value['customer_address'])
                     ->addViolation();
             }
