@@ -27,7 +27,6 @@ class DataValidator extends ConstraintValidator
                     ->setParameter('{{ value }}', $value['customer_address'])
                     ->addViolation();
             }
-
         }
 
         if (!empty($value['customer_name'])) {

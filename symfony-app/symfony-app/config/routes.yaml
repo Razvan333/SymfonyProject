@@ -2,3 +2,24 @@ patch_customer:
     path: /customer/patch/{id}
     controller: App\Controller\CustomerPatchController::patchCustomer
     methods: PATCH
+
+post_create_customer:
+    path: /customer/post
+    controller: App\Controller\CustomerPostController::createCustomer
+    methods: POST
+
+get_all_customer:
+    path: /customer
+    controller: App\Controller\CustomerController::index
+    methods: GET
+
+get_customer:
+    path: /customer/{id}
+    controller: App\Controller\CustomerController::getCustomerById
+    methods: GET
+
+put_customer_update:
+    path: /customer/put/{id}
+    controller: App\Controller\CustomerPutController::updateCustomer
+    methods: PUT
+
