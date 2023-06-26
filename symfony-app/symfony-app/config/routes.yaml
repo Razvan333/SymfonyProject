@@ -3,6 +3,11 @@ put_customer_update:
     controller: App\Controller\CustomerPutController::updateCustomer
     methods: PUT
 
+post_create_customer:
+    path: /customer/post
+    controller: App\Controller\CustomerPostController::createCustomer
+    methods: POST
+
 get_all_customer:
     path: /customer
     controller: App\Controller\CustomerController::index
