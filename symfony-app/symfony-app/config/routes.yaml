@@ -13,3 +13,7 @@ get_customer:
     controller: App\Controller\CustomerController::getCustomerById
     methods: GET
 
+put_customer_update:
+    path: /customer/put/{id}
+    controller: App\Controller\CustomerPutController::updateCustomer
+    methods: PUT
