@@ -1,8 +1,3 @@
-put_customer_update:
-    path: /customer/put/{id}
-    controller: App\Controller\CustomerPutController::updateCustomer
-    methods: PUT
-
 post_create_customer:
     path: /customer/post
     controller: App\Controller\CustomerPostController::createCustomer
@@ -17,3 +12,8 @@ get_customer:
     path: /customer/{id}
     controller: App\Controller\CustomerController::getCustomerById
     methods: GET
+
+put_customer_update:
+    path: /customer/put/{id}
+    controller: App\Controller\CustomerPutController::updateCustomer
+    methods: PUT
