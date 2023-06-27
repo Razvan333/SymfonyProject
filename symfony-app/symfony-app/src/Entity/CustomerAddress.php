@@ -5,29 +5,40 @@ namespace App\Entity;
 use App\Repository\CustomerAddressRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Table(name="customer_address")
- * @ORM\Entity
- */
+#[ORM\Table(name: "customer_address")]
 #[ORM\Entity(repositoryClass: CustomerAddressRepository::class)]
 class CustomerAddress
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
+    #[ORM\Column(name: "customer_id", type: "integer", nullable: true)]
+    private ?string $customerId = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $address = null;
 
-    #[ORM\ManyToOne(inversedBy: 'customerAddresses')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Customer $customerId = null;
+    #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: "addresses")]
+    #[ORM\JoinColumn(name: "customer_id", referencedColumnName: "customer_id")]
+    private ?Customer $customer = null;
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getCustomerId(): ?string
+    {
+        return $this->customerId;
+    }
+
+    public function setCustomerId(?string $customerId): self
+    {
+        $this->customerId = $customerId;
+
+        return $this;
     }
 
     public function getAddress(): ?string
@@ -42,14 +53,14 @@ class CustomerAddress
         return $this;
     }
 
-    public function getCustomerId(): ?Customer
+    public function getCustomer(): ?Customer
     {
-        return $this->customerId;
+        return $this->customer;
     }
 
-    public function setCustomerId(?Customer $customerId): self
+    public function setCustomer(?Customer $customer): self
     {
-        $this->customerId = $customerId;
+        $this->customer = $customer;
 
         return $this;
     }

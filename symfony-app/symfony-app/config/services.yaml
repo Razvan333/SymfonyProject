@@ -71,6 +71,10 @@ services:
             $validator: '@validator'
 
     App\Controller\CustomerPostController:
+        arguments:
+            $entityManager: '@doctrine.orm.default_entity_manager'
+            $validator: '@validator'
+            $serializer: '@serializer'
 
     redis:
         class: Predis\Client

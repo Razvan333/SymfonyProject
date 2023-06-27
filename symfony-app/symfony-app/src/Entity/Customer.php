@@ -6,35 +6,28 @@ use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
-use Symfony\Component\Serializer\Annotation\MaxDepth;
 
-/**
- * @ORM\Table(name="customer")
- * @ORM\Entity
- */
+#[ORM\Table(name: "customer")]
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 class Customer
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     */
-    #[Groups('customer')]
     #[ORM\Id]
-    #[ORM\Column(type: 'integer')]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $id = null;
-    #[Groups('customer')]
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $customer_name = null;
 
-    #[ORM\OneToMany(mappedBy: 'customerId', targetEntity: CustomerAddress::class)]
-    #[MaxDepth(1)]
-    private Collection $customerAddresses;
+    #[ORM\Column(name: "customer_id", type: "integer", unique: true, nullable: false)]
+    private ?int $customerId = null;
+
+    #[ORM\Column(name: "customer_name", type: "string", length: 255, nullable: true)]
+    private ?string $customerName = null;
+
+    #[ORM\OneToMany(mappedBy: 'customer', targetEntity: CustomerAddress::class, cascade: ['persist'])]
+    private Collection $addresses;
 
     public function __construct()
     {
-        $this->customerAddresses = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -42,21 +35,26 @@ class Customer
         return $this->id;
     }
 
-    public function setId(int $id): self
+    public function getCustomerId(): ?int
     {
-        $this->id = $id;
+        return $this->customerId;
+    }
+
+    public function setCustomerId(?int $customerId): self
+    {
+        $this->customerId = $customerId;
 
         return $this;
     }
 
     public function getCustomerName(): ?string
     {
-        return $this->customer_name;
+        return $this->customerName;
     }
 
-    public function setCustomerName(?string $customer_name): self
+    public function setCustomerName(?string $customerName): self
     {
-        $this->customer_name = $customer_name;
+        $this->customerName = $customerName;
 
         return $this;
     }
@@ -64,29 +62,25 @@ class Customer
     /**
      * @return Collection<int, CustomerAddress>
      */
-    public function getCustomerAddresses(): Collection
+    public function getAddresses(): Collection
     {
-        return $this->customerAddresses;
+        return $this->addresses;
     }
 
-    public function setCustomerAddress(CustomerAddress $customerAddress): self
+    public function addAddress(CustomerAddress $address): self
     {
-        if (!$this->customerAddresses->contains($customerAddress)) {
-            $this->customerAddresses->add($customerAddress);
-            $customerAddress->setCustomerId($this);
+        if (!$this->addresses->contains($address)) {
+            $this->addresses->add($address);
+            $address->setCustomer($this);
         }
 
         return $this;
     }
 
-    public function removeCustomerAddress(CustomerAddress $customerAddress): self
+    public function removeAddress(CustomerAddress $address): self
     {
-        if ($this->customerAddresses->removeElement($customerAddress)) {
-            // set the owning side to null (unless already changed)
-            if ($customerAddress->getCustomerId() === $this) {
-                $customerAddress->setCustomerId(null);
-            }
-        }
+        $this->addresses->removeElement($address);
+        $address->setCustomer(null);
 
         return $this;
     }
