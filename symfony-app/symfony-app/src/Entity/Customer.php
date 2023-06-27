@@ -16,7 +16,7 @@ class Customer
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(name: "customer_id", type: "integer", nullable: true)]
+    #[ORM\Column(name: "customer_id", type: "integer", unique: true, nullable: false)]
     private ?int $customerId = null;
 
     #[ORM\Column(name: "customer_name", type: "string", length: 255, nullable: true)]
