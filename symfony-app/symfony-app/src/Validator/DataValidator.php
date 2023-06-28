@@ -15,10 +15,12 @@ class DataValidator extends ConstraintValidator
             return;
         }
 
-        if (!preg_match('/^[0-9]+$/', $value['id'])) {
-            $this->context->buildViolation($constraint->numberMessage)
-                ->setParameter('{{ value }}', $value['id'])
-                ->addViolation();
+        if (!empty($value['id'])) {
+            if (!preg_match('/^[0-9]+$/', $value['id'])) {
+                $this->context->buildViolation($constraint->numberMessage)
+                    ->setParameter('{{ value }}', $value['id'])
+                    ->addViolation();
+            }
         }
 
         if (!empty($value['customer_address'])) {

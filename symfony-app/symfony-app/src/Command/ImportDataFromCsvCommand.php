@@ -4,8 +4,8 @@ namespace App\Command;
 
 use App\Entity\Customer;
 use App\Entity\CustomerAddress;
+use App\Repository\CustomerRepository;
 use App\Validator\Data;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -21,15 +21,17 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 )]
 class ImportDataFromCsvCommand extends Command
 {
-    private EntityManagerInterface $entityManager;
     private const BATCH_SIZE = 1000;
 
     private ValidatorInterface $validator;
 
-    public function __construct(EntityManagerInterface $entityManager, ValidatorInterface $validator)
-    {
-        $this->entityManager = $entityManager;
+    private CustomerRepository $customerRepository;
+    public function __construct(
+        ValidatorInterface $validator,
+        CustomerRepository $customerRepository
+    ) {
         $this->validator = $validator;
+        $this->customerRepository = $customerRepository;
         parent::__construct();
     }
 
@@ -63,27 +65,18 @@ class ImportDataFromCsvCommand extends Command
                 return Command::FAILURE;
             }
 
-            $customerIdIndex = array_search('customer_id', $headers);
             $customerAddressIndex = array_search('address', $headers);
 
-            if ($customerIdIndex === false || $customerAddressIndex === false) {
-                $io->error('CSV file is missing required columns: customer_id, address');
+            if ($customerAddressIndex === false) {
+                $io->error('CSV file is missing required column: address');
 
                 return Command::FAILURE;
             }
 
             while (($row = fgetcsv($file, self::BATCH_SIZE,',')) !== false) {
-                if (count($row) !== 2) {
-                    $io->error('Invalid row format: Insufficient columns');
-
-                    return Command::FAILURE;
-                }
-
                 $dataForValidation = [
-                    'id' => $row[$customerIdIndex],
                     'customer_address' => $row[$customerAddressIndex]
                 ];
-
                 $violations = $this->validator->validate($dataForValidation, new Data());
                 if (count($violations)) {
                     foreach ($violations as $violation) {
@@ -93,36 +86,26 @@ class ImportDataFromCsvCommand extends Command
                     return Command::FAILURE;
                 }
 
-                $customerId = (int) $row[$customerIdIndex];
                 $address = $row[$customerAddressIndex];
 
                 $customer = new Customer();
-                $customer->setCustomerId($customerId);
 
                 $customerAddress = new CustomerAddress();
                 $customerAddress
-                    ->setCustomerId($customerId)
                     ->setAddress($address);
 
                 $customer->addAddress($customerAddress);
 
-                $this->entityManager->beginTransaction();
-
-                $this->entityManager->persist($customer);
+                $this->customerRepository->save($customer);
 
                 $batchCount++;
                 if ($batchCount % self::BATCH_SIZE === 0) {
-                    $this->entityManager->flush();
-                    $this->entityManager->clear();
+                    $this->customerRepository->flushAndClear();
                 }
             }
 
-            $this->entityManager->flush();
-            $this->entityManager->clear();
-
-            $this->entityManager->commit();
+            $this->customerRepository->flushAndClear();
         } catch (\Exception $e) {
-            $this->entityManager->rollback();
             $io->error('Error importing data: ' . $e->getMessage());
 
             return Command::FAILURE;

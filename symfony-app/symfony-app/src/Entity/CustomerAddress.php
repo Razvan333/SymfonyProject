@@ -21,7 +21,7 @@ class CustomerAddress
     private ?string $address = null;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: "addresses")]
-    #[ORM\JoinColumn(name: "customer_id", referencedColumnName: "customer_id")]
+    #[ORM\JoinColumn(name: "customer_id", referencedColumnName: "id")]
     private ?Customer $customer = null;
 
     public function getId(): ?int
