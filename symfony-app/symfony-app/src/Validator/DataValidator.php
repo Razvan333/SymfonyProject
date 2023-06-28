@@ -11,7 +11,7 @@ class DataValidator extends ConstraintValidator
     {
         /* @var App\Validator\Data $constraint */
 
-        if (null === $value || '' === $value) {
+        if (!is_array($value)) {
             return;
         }
 

@@ -13,7 +13,7 @@ class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
     #[ORM\Column(name: "customer_id", type: "integer", unique: true, nullable: false)]
@@ -70,7 +70,7 @@ class Customer
     public function addAddress(CustomerAddress $address): self
     {
         if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
+            $this->addresses[] = $address;
             $address->setCustomer($this);
         }
 
