@@ -12,11 +12,26 @@ use Symfony\Component\Validator\Constraint;
 #[\Attribute(\Attribute::TARGET_PROPERTY | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class Data extends Constraint
 {
-    /*
-     * Any public properties become valid options for the annotation.
-     * Then, use these in your validator class.
-     */
-    public $numberMessage = 'Customer id is not in a valid format: {{ value }}';
-    public $fullNameMessage = 'Customer name is not in a valid format: {{ value }}';
-    public $addressMessage = 'Customer address is not in a valid format: {{ value }}';
+    public $fields = [];
+
+    public function __construct(mixed $options = null, array $groups = null, mixed $payload = null)
+    {
+        parent::__construct($options, $groups, $payload);
+
+        $this->fields = [
+            'id' => '/^[0-9]+$/',
+            'customer_address' => '/^[a-zA-Z0-9.\săâțșî]+$/',
+            'customer_name' => '/^[a-zA-Z\săâțșî]+$/',
+        ];
+    }
+
+    public function getMessage($fieldName): string
+    {
+        return match ($fieldName) {
+            'customer_id' => 'Invalid customer ID: {{ value }}',
+            'customer_address' => 'Invalid customer address: {{ value }}',
+            'customer_name' => 'Invalid customer name: {{ value }}',
+            default => 'Invalid field: {{ value }}',
+        };
+    }
 }
