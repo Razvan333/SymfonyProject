@@ -27,9 +27,15 @@ class CustomerRepository extends ServiceEntityRepository
 
         if ($flush) {
             $this->getEntityManager()->flush();
+            $this->getEntityManager()->clear();
         }
     }
 
+    public function flushAndClear(): void
+    {
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+    }
     public function remove(Customer $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);

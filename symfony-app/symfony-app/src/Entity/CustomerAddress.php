@@ -14,14 +14,14 @@ class CustomerAddress
     #[ORM\Column(type: "integer")]
     private ?int $id = null;
 
-    #[ORM\Column(name: "customer_id", type: "integer", nullable: true)]
-    private ?string $customerId = null;
+    #[ORM\Column(name: "customer_id", type: "integer", nullable: false)]
+    private ?int $customerId = null;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     private ?string $address = null;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: "addresses")]
-    #[ORM\JoinColumn(name: "customer_id", referencedColumnName: "customer_id")]
+    #[ORM\JoinColumn(name: "customer_id", referencedColumnName: "id")]
     private ?Customer $customer = null;
 
     public function getId(): ?int
@@ -29,12 +29,12 @@ class CustomerAddress
         return $this->id;
     }
 
-    public function getCustomerId(): ?string
+    public function getCustomerId(): ?int
     {
         return $this->customerId;
     }
 
-    public function setCustomerId(?string $customerId): self
+    public function setCustomerId(?int $customerId): self
     {
         $this->customerId = $customerId;
 
