@@ -35,26 +35,25 @@ class Customer
         return $this->id;
     }
 
-    public function getCustomerId(): ?int
+    public function getFirstName(): ?string
     {
-        return $this->customerId;
+        return $this->firstName;
     }
 
-    public function setCustomerId(?int $customerId): self
+    public function setFirstName(?string $firstName): self
     {
-        $this->customerId = $customerId;
+        $this->firstName = $firstName;
 
         return $this;
     }
-
-    public function getCustomerName(): ?string
+    public function getLastName(): ?string
     {
-        return $this->customerName;
+        return $this->lastName;
     }
 
-    public function setCustomerName(?string $customerName): self
+    public function setLastName(?string $lastName): self
     {
-        $this->customerName = $customerName;
+        $this->lastName = $lastName;
 
         return $this;
     }
