@@ -6,6 +6,3 @@ framework:
             amqp:
                 dsn: '%env(RABBITMQ_CONN)%'
             failed: 'doctrine://default?queue_name=failed'
-
-        routing:
-            'App\Message\RabbitMqMessage': amqp

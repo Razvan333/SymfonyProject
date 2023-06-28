@@ -30,17 +30,9 @@ services:
         autoconfigure: true
         tags: ['validator.constraint_validator']
 
-    App\Command\TestRabbitMqConnectionCommand:
+    App\Repository\CustomerRepository:
         arguments:
-            $messageBus: '@Symfony\Component\Messenger\MessageBusInterface'
-
-    App\MessageHandler\RabbitMqMessageHandler:
-        arguments:
-            $entityManager: '@doctrine.orm.default_entity_manager'
-            $validator: '@validator'
-        tags: ['messenger.message_handler']
-
-    App\Message\RabbitMqMessage:
+            $registry: '@doctrine'
 
     PhpAmqpLib\Connection\AMQPStreamConnection:
         arguments:
@@ -50,11 +42,17 @@ services:
             $password: '12345'
             $vhost: '/'
 
-    App\Command\ConsumeRabbitMqMessagesCommand:
-        tags: ['console.command']
+    App\Consumer\RabbitMqMessageConsumer:
         arguments:
-            $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
+            $customerRepository: '@App\Repository\CustomerRepository'
+            $validator: '@validator'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
+            $queueName: 'test_queue'
+        tags: ['messenger.message_handler']
+
+    App\Command\RabbitMqMessagesCommand:
+        arguments:
+            $rabbitMqMessageConsumer: '@App\Consumer\RabbitMqMessageConsumer'
 
     App\Controller\CustomerDeleteController:
         arguments:
