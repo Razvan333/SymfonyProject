@@ -1,16 +1,16 @@
 delete_customer:
-    path: /customer/delete/{id}
-    controller: App\Controller\CustomerDeleteController::deleteCustomer
+    path: /customer/{id}
+    controller: App\Controller\CustomerController::deleteCustomer
     methods: DELETE
 
 patch_customer:
-    path: /customer/patch/{id}
-    controller: App\Controller\CustomerPatchController::patchCustomer
+    path: /customer/{id}
+    controller: App\Controller\CustomerController::patchCustomer
     methods: PATCH
 
 post_create_customer:
-    path: /customer/post
-    controller: App\Controller\CustomerPostController::createCustomer
+    path: /customer
+    controller: App\Controller\CustomerController::createCustomer
     methods: POST
 
 get_all_customer:
@@ -24,6 +24,6 @@ get_customer:
     methods: GET
 
 put_customer_update:
-    path: /customer/put/{id}
-    controller: App\Controller\CustomerPutController::updateCustomer
+    path: /customer/{id}
+    controller: App\Controller\CustomerController::updateCustomer
     methods: PUT

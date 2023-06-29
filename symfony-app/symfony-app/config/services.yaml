@@ -56,34 +56,21 @@ services:
             $messageHandler: '@App\MessageHandler\RabbitMqMessageHandler'
             $rabbitMqConnection: '@PhpAmqpLib\Connection\AMQPStreamConnection'
 
-    App\Controller\CustomerDeleteController:
-        arguments:
-            $entityManager: '@doctrine.orm.default_entity_manager'
-
-    App\Controller\CustomerPatchController:
-        arguments:
-            $entityManager: '@doctrine.orm.default_entity_manager'
-            $validator: '@validator'
-
-    App\Controller\CustomerPutController:
-        arguments:
-            $entityManager: '@doctrine.orm.default_entity_manager'
-            $validator: '@validator'
-
-    App\Controller\CustomerPostController:
-        arguments:
-            $entityManager: '@doctrine.orm.default_entity_manager'
-            $validator: '@validator'
-            $serializer: '@serializer'
-
     redis:
         class: Predis\Client
         arguments:
             - '%env(resolve:REDIS_URL)%'
 
+    App\Service\CustomerControllerService:
+
+    App\Repository\CustomerRepository:
+        arguments:
+            $registry: '@doctrine'
+
     App\Controller\CustomerController:
         arguments:
-            $serializer: '@serializer'
             $validator: '@validator'
+            $customerRepository: '@App\Repository\CustomerRepository'
             $entityManager: '@doctrine.orm.default_entity_manager'
             $cache: '@redis'
+            $customerService: '@App\Service\CustomerControllerService'
