@@ -82,7 +82,7 @@ class RabbitMqMessageConsumer
                 }
             }
 
-            $fullName = explode(' ', $data['customer_name']);
+            $fullName = explode(' ', $data['customer_name'] ?? '');
             $lastName = array_pop($fullName);
             $firstName = implode(' ', $fullName);
 
@@ -93,7 +93,7 @@ class RabbitMqMessageConsumer
 
             $customerAddress = new CustomerAddress();
             $customerAddress
-                ->setAddress($data['customer_address']);
+                ->setAddress($data['customer_address'] ?? '');
 
             $customer->addAddress($customerAddress);
 
