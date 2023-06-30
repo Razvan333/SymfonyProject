@@ -51,6 +51,7 @@ class CustomerController extends AbstractController
             AbstractNormalizer::CIRCULAR_REFERENCE_HANDLER => function (object $object, string $format, array $context): string {
                 return $object->getId();
             },
+            AbstractNormalizer::IGNORED_ATTRIBUTES => ['customer'],
         ];
         $normalizer = new ObjectNormalizer(
             null,
@@ -84,9 +85,8 @@ class CustomerController extends AbstractController
             $customers = $repository->findBy([], null, $perPage, $offset);
 
             if (null == $customers) {
-                $error = $this->serializer->serialize(['errors' => 'CUSTOMER TABLE EMPTY'], 'json');
 
-                return new JsonResponse($error, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
+                return new JsonResponse('', Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
             }
 
             $paginationData = [
@@ -116,12 +116,18 @@ class CustomerController extends AbstractController
             $customer = $this->entityManager->getRepository(Customer::class)->find($id);
 
             if (null == $customer) {
-                $error = $this->serializer->serialize(['errors' => 'CUSTOMER NOT FOUND'], 'json');
 
-                return new JsonResponse($error, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
+                return new JsonResponse('', Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
             }
 
-            $customer = $this->serializer->serialize($customer, 'json');
+            $paginationData = [
+                'total_customers' => 1,
+                'page' => 1,
+                'per_page' => 1,
+                'customers' => $customer,
+            ];
+
+            $customer = $this->serializer->serialize($paginationData, 'json');
 
             $this->cache->set($cacheKey, $customer);
             $this->cache->expire($cacheKey, self::CACHE_TIMER);
@@ -136,9 +142,8 @@ class CustomerController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['customer_name'])) {
-            $error = $this->serializer->serialize(['errors' => 'Post request incorrect. Incorrect key'], 'json');
 
-            return new JsonResponse($error, Response::HTTP_BAD_REQUEST, ['Content-Type' => 'application/json'], true);
+            return new JsonResponse('', Response::HTTP_BAD_REQUEST, ['Content-Type' => 'application/json'], true);
         }
 
         $response = $this->customerService->validateData($data, $this->validator, $this->serializer);
@@ -189,9 +194,8 @@ class CustomerController extends AbstractController
         try {
             $customer = $this->entityManager->getRepository(Customer::class)->find($customerId);
             if (null == $customer) {
-                $error = $this->serializer->serialize(['errors' => 'CUSTOMER NOT FOUND'], 'json');
 
-                return new JsonResponse($error, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
+                return new JsonResponse('', Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
             }
 
             $fullName = $this->customerService->formatCustomerName($data['customer_name'] ?? '');
@@ -240,9 +244,8 @@ class CustomerController extends AbstractController
         try {
             $customer = $this->entityManager->getRepository(Customer::class)->find($customerId);
             if (null == $customer) {
-                $error = $this->serializer->serialize(['error' => 'CUSTOMER NOT FOUND'], 'json');
 
-                return new JsonResponse($error, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
+                return new JsonResponse('', Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
             }
 
             if (isset($data['customer_name'])) {
@@ -282,9 +285,8 @@ class CustomerController extends AbstractController
         try {
             $customer = $this->entityManager->getRepository(Customer::class)->find($customerId);
             if (!$customer) {
-                $error = $this->serializer->serialize(['errors' => 'CUSTOMER NOT FOUND'], 'json');
 
-                return new JsonResponse($error, Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
+                return new JsonResponse('', Response::HTTP_NO_CONTENT, ['Content-Type' => 'application/json'], true);
             }
 
             $this->customerRepository->remove($customer, true);
