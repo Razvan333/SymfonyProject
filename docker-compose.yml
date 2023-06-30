@@ -10,6 +10,17 @@ services:
       - '9000:9000'
     volumes:
       - ./symfony-app/symfony-app:/var/www/html
+  nginx:
+    container_name: nginx
+    build:
+      context: ./dockerfile-nginx
+      dockerfile: Dockerfile
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+    depends_on:
+      - php-fpm
   mysql:
     build:
       context: ./dockerfile-mysql
