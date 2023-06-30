@@ -30,7 +30,7 @@ class CustomerController extends AbstractController
     private CustomerRepository $customerRepository;
     private CustomerControllerService $customerService;
     private const CACHE_TIMER = 86400;
-    private const ALL_CUSTOMERS_CACHE_KEY = 'all_customer';
+    private const ALL_CUSTOMERS_CACHE_KEY = 'all_customers';
     private const CUSTOMER_CACHE_KEY = 'customer_';
 
     public function __construct (
@@ -65,7 +65,7 @@ class CustomerController extends AbstractController
         $this->serializer = new Serializer([$normalizer], [$encoder]);
     }
 
-    #[Route('/customer', name: 'get_all_customer', methods: ['GET'])]
+    #[Route('/customer', name: 'get_all_customers', methods: ['GET'])]
     public function index(Request $request): JsonResponse
     {
         $page = $request->query->getInt('page', 1);
