@@ -136,7 +136,7 @@ class CustomerController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['customer_name'])) {
-            $error = ['errors' => 'Post request incorrect. Incorrect key'];
+            $error = $this->serializer->serialize(['errors' => 'Post request incorrect. Incorrect key'], 'json');
 
             return new JsonResponse($error, Response::HTTP_BAD_REQUEST, ['Content-Type' => 'application/json'], true);
         }
