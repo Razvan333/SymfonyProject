@@ -61,10 +61,6 @@ services:
 
     App\Service\CustomerControllerService:
 
-    App\Repository\CustomerRepository:
-        arguments:
-            $registry: '@doctrine'
-
     App\Controller\CustomerController:
         arguments:
             $validator: '@validator'
