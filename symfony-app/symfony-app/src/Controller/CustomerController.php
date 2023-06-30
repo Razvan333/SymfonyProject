@@ -136,7 +136,7 @@ class CustomerController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (!isset($data['customer_name'])) {
-            $error = ['errors' => 'Patch request incorrect. Incorrect keys'];
+            $error = ['errors' => 'Post request incorrect. Incorrect key'];
 
             return new JsonResponse($error, Response::HTTP_BAD_REQUEST, ['Content-Type' => 'application/json'], true);
         }
@@ -153,7 +153,7 @@ class CustomerController extends AbstractController
             $customer = new Customer();
             $customer
                 ->setFirstName($fullName['firstName'])
-                ->setLastName($fullName['lastNAme']);
+                ->setLastName($fullName['lastName']);
 
             $customerAddress = new CustomerAddress();
             $customerAddress->setAddress($data['customer_address'] ?? '');
